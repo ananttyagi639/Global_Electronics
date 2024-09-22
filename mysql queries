@@ -1,0 +1,184 @@
+
+Adjusted SQL Queries for all_data:
+
+1. Demographic Distribution by Gender and Age Group:
+
+SELECT Gender, COUNT(*) AS Count, 
+       CASE 
+          WHEN Age < 20 THEN 'Under 20'
+          WHEN Age BETWEEN 20 AND 40 THEN '20-40'
+          WHEN Age BETWEEN 40 AND 60 THEN '40-60'
+          ELSE '60+' 
+       END AS Age_Group
+FROM all_data
+GROUP BY Gender, Age_Group;
+
+
+2. Customers by Country:
+
+SELECT Country, COUNT(DISTINCT CustomerKey) AS Total_Customers 
+FROM all_data
+GROUP BY Country
+ORDER BY Total_Customers DESC;
+
+
+3. Customer Segmentation by Purchasing Behavior (High-value Customers):
+
+SELECT Country, SUM(Quantity * Unit_Price_USD) AS Total_Spent,SELECT Gender, COUNT(*) AS Count, 
+       CASE 
+          WHEN Age < 20 THEN 'Under 20'
+          WHEN Age BETWEEN 20 AND 40 THEN '20-40'
+          WHEN Age BETWEEN 40 AND 60 THEN '40-60'
+          WHEN Age BETWEEN 60 AND 80 THEN '60-80'
+          ELSE '80+'
+       END AS Age_Group
+
+FROM all_data
+GROUP BY Country,age_group,gender
+HAVING Total_Spent > 1000  -- Threshold for high-value customers
+ORDER BY Total_Spent DESC;
+
+
+4. Overall Sales Performance Over Time (Monthly Sales):
+
+SELECT DATE_FORMAT(Order_Date, '%Y-%m') AS Month, SUM(Quantity * Unit_Price_USD) AS Total_Sales
+FROM all_data
+GROUP BY Month
+ORDER BY Month;
+
+
+5. Top Performing Products by Quantity Sold:
+
+SELECT Product,Brand, SUM(Quantity) AS Total_Quantity_Sold
+FROM all_data
+GROUP BY Product
+ORDER BY Total_Quantity_Sold DESC
+LIMIT 10;
+
+
+6. Sales by Store (Store Performance):
+
+SELECT StoreKey, Store_Country, SUM(Quantity * Unit_Price_USD) AS Total_Sales
+FROM all_data
+GROUP BY StoreKey,Store_ Country
+ORDER BY Total_Sales DESC;
+
+
+7. Most Profitable Products:
+
+SELECT Product, SUM((Unit_Price_USD - Unit_Cost_USD) * Quantity) AS Profit
+FROM all_data
+GROUP BY Product
+ORDER BY Profit DESC
+LIMIT 10;
+
+
+8. Sales by Product Category:
+
+SELECT Category, SUM(Quantity * Unit_Price_USD) AS Total_Sales
+FROM all_data
+GROUP BY Category
+ORDER BY Total_Sales DESC;
+
+
+9. Store Performance by Size (Sales per Square Meter):
+
+SELECT StoreKey, Store_Country, Square_Meters, open_Date
+       SUM(Quantity * Unit_Price_USD) AS Sales_Store
+FROM all_data
+GROUP BY StoreKey, Store_Country, Square_Meters,Open_Date
+ORDER BY Sales_Per_Square_Meter DESC;
+
+
+10. Sales Performance by Currency:
+
+
+
+SELECT Currency_Code, SUM(Quantity * Exchange) AS Total_Sales_basesd_currency, Exchange
+FROM all_data
+GROUP BY Currency_Code, Exchange
+ORDER BY Total_Sales_based_currency DESC;
+
+These queries are now ready to work with your combined all_data table, simplifying the analysis process. Let me know if you need further customization!
+
+SELECT 
+    Order_Number, 
+    SUM(Quantity * Unit_Price_USD) AS Total_Order_Value
+FROM 
+    all_data
+GROUP BY 
+    Order_Number;
+
+To get the overall AOV, you can divide the total value of all orders by the total number of orders:
+
+SELECT 
+    SUM(Quantity * Unit_Price_USD) / COUNT(DISTINCT Order_Number) AS Average_Order_Value
+FROM 
+    all_data;
+
+2. Frequency of Purchases
+
+To identify the frequency of purchases per customer, you can count the number of orders each customer has made.
+
+SELECT 
+    CustomerKey, 
+    COUNT(DISTINCT Order_Number) AS Purchase_Frequency
+FROM 
+    all_data
+GROUP BY 
+    CustomerKey
+ORDER BY 
+    Purchase_Frequency DESC;
+
+
+1) LEAST SOLD AND REVENUE GENERATED PRODUCTS 10
+SELECT 
+    ProductKey, 
+    SUM(Quantity) AS Total_Sales
+FROM 
+    all_data
+GROUP BY 
+    ProductKey
+ORDER BY 
+    Total_Sales ASC
+LIMIT 10;
+SELECT 
+    ProductKey, 
+    SUM(Quantity * Unit_Price_USD) AS Total_Revenue
+FROM 
+    all_data
+GROUP BY 
+    ProductKey
+ORDER BY 
+    Total_Revenue ASC
+LIMIT 10;
+
+
+ 2))) buisness: Profitability Analysis: Calculate profit margins for products by comparing unit cost and unit price.
+SELECT 
+    ProductKey,
+    SUM(Quantity) AS Total_Sales,
+    SUM(Quantity * (Unit_Price_USD - Unit_Cost_USD)) AS Total_Profit,
+    ((Unit_Price_USD - Unit_Cost_USD) / Unit_Price_USD) * 100 AS Profit_Margin_Percentage
+FROM 
+    all_data
+GROUP BY 
+    ProductKey
+ORDER BY 
+    Profit_Margin_Percentage DESC;
+
+4))) Profitability Analysis: Calculate profit margins for products by comparing unit cost and unit price.
+
+5)))profit margin total profit total sales  on brands and products
+SELECT 
+    Product,Brand
+    SUM(Quantity) AS Total_Sales,
+    SUM(Quantity * (Unit_Price_USD - Unit_Cost_USD)) AS Total_Profit,
+    (SUM(Quantity * (Unit_Price_USD - Unit_Cost_USD)) / SUM(Quantity * Unit_Price_USD)) * 100 AS Profit_Margin_Percentage
+FROM 
+    all_data
+GROUP BY 
+    Product, Brand
+ORDER BY 
+    Profit_Margin_Percentage DESC
+LIMIT 10;
